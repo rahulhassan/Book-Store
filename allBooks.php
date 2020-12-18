@@ -18,6 +18,10 @@
                 font-size: 30px;
                 text-align: center;
             }
+            table tr td a{
+                text-decoration: none;
+
+            }
             table.center {
                 margin-left: auto;
                 margin-right: auto;
@@ -71,7 +75,7 @@
     <body>
         <input type="text" onkeyup="liveSearch(this)" placeholder="Type here..." id="ssearchBox">
         <div id="suggestion"></div>
-        <table class="center content-table">
+        <table class="center content-table" id="myTable">
             <tr> 
                 <th>ID</th>
                 <th>Name</th>
@@ -79,20 +83,23 @@
                 <th>Edition</th>
                 <th>Image</th>
             </tr>
-            
             <?php
 				foreach($books as $b){
-                echo 
-                "<tr>
-                    <td>".$b["id"]."</td>
-                    <td>".$b["name"]."</td>
-                    <td>".$b["author"]."</td>
-                    <td>".$b["edition"]."</td>
-                    <td><img src='".$b["bookimage"]."'width= '50px'></td>
-                </tr>";
+            ?>
+            <tr>
+            <a href="book_details.php?id=<?php echo $b["id"];?>">
+                <td><?php echo $b["id"] ?></td>
+                
+                <td><a href="book_details.php?id=<?php echo $b["id"];?>"><?php echo $b["name"] ?></a></td>
+                <td><?php echo $b["author"] ?></td>
+                <td><?php echo $b["edition"] ?></td>
+                <td><img src="<?php echo $b["bookimage"] ?>" width= "50px"></td>
+            </tr>
+            <?php	   
                 }
             ?>
         </table>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
         <script>
             function liveSearch(textBox){
 
@@ -109,6 +116,29 @@
                 xhr.open("GET","searchBooks.php?name="+textBox.value,true);
                 xhr.send();
             }
+            $(document).ready(function(){
+                $('#ssearchBox').keyup(function(){
+                    search_table($(this).val());
+
+                });
+                function search_table(value){
+                    $('#myTable tr').each(function(){
+
+                        var found = false;
+                        $(this).each(function(){
+                            if($(this).text().toLowerCase().indexOf(value.toLowerCase())>=0)
+                            {
+                                found = 'true';
+                            }
+                        });
+                        if(found=='true'){
+                            $(this).show();
+                        }else{
+                            $(this).hide();
+                        }
+                    });
+                }
+            });
         </script>
     </body>
 </html>
